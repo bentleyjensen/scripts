@@ -1,0 +1,68 @@
+#! /bin/bash
+
+zero="0"
+realFileName=''
+
+#checks if the file ends in a slash, then sets realFileName to that without the slash
+function isFile () {
+    # If the argument ends in slash
+    if [[ $1 =~ /$ ]]
+    then
+        arg=$1
+        #get length of the string and subtract to compensate for the slash
+        let len=${#arg}-1
+        #take arg from the zero index and extract the true length of the string
+        realFileName="${arg:0:$len}"
+    fi
+}
+
+
+#Start of doing things
+if [ "$#" -gt "$zero" ]
+then
+    echo "Secure copy started!"
+    for i in $@; do
+        if [[ $i =~ \.zip$ ]]
+        then
+            echo Copying $i...
+            #cp $i /Users/bentley/Development/$i
+            #scp $i bentley@ubuntu:/etc/nginx/data/www/$i
+            echo Copied.
+            echo
+        elif [[ $i =~ \/$  ]]
+        then
+            read -p "$i is not zipped. Do you want to zip it now? (Y or n)" yn
+            case $yn in
+                [Yy]* ) isFile $i;
+                    echo "Zipping $realFileName...";
+                    #zip -r $realFileName.zip $i;
+                    echo "Zipped $realFileName"
+                    echo Copying $realFileName.zip to /Users/Development/$realFileName.zip...;
+                    #cp $realFileName.zip /Users/bentley/Development/$realFileName;
+                    #scp $realFileName.zip bentley@ubuntu:~/www/$realFileName
+                    echo Copied $realFileName.;
+                    echo;;
+                [Nn]* ) exit ;; 
+                * ) echo "Please try again.";;
+            esac 
+#        else
+#            read -p "$i is not zipped. Do you want to zip it now? (Y or n)" yn
+#            case $yn in
+#                [Yy]* ) echo "Zipping $realFileName...";
+#                    #zip -r $realFileName.zip $i;
+#                    echo Copying $realFileName.zip to /Users/Development/$realFileName.zip...;
+#                    #cp $realFileName.zip /Users/bentley/Development/$realFileName;
+#                    #scp $realFileName.zip bentley@ubuntu:/etc/nginx/data/www/$realFileName
+#                    echo Copied $realFileName.;
+#                    echo;;
+#                [Nn]* ) exit ;;
+#                * ) echo "Please answer yes or no.";;
+#            esac
+#
+        fi 
+    done
+else 
+    echo "Please provide a file or folder name."
+fi
+
+
